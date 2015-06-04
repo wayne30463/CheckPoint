@@ -1,0 +1,32 @@
+{
+			"state" : true,
+			"stage_count" : 10,
+			"start_time" : "00:00:00",
+			"end_time" : "16:52:52",
+			"most_pass" : 2,
+			"all_pass" : 0,
+			"stage_data" : 
+			[
+				{ "stg_id" : "00" , "challenge" : 2, "pass" : 2, "avg_time" : "01:00"},
+				{ "stg_id" : "01" , "challenge" : 2, "pass" : 1, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"},
+				{ "stg_id" : "02" , "challenge" : 2, "pass" : 0, "avg_time" : "00:00"}
+			]
+}

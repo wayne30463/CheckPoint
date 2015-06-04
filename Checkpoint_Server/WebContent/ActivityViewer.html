@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html ng-app="ActViw">
+<head>
+ 	<meta charset="UTF-8" />
+	<script type="text/javascript" src="./js/jquery.min.js"></script>
+	<script src="./js/angular.min.js"></script>
+	<script src="./js/bootstrap.js"></script>
+	<script src="./js/bootbox.min.js"></script>
+	<link rel="stylesheet" href="./css/bootstrap.min.css">
+	<link rel="stylesheet" href="./css/bootstrap-theme.min.css">
+	<script src="./js/jquery.cookie.js" type="text/javascript"></script>
+	<script src="./js/checkpoint.js"></script>
+	<style type="text/css">
+			.DivTop {
+				margin-top: 2%;
+				font-size: 50px;
+				text-align: center;
+				width: 100%;
+				height: 10%;
+			}
+			.DivContainer {
+				width: 100%;
+				display: inline;
+			}
+			.DivShow {
+				margin: 0 auto;
+				margin-top: 10%;
+				width: 80%;
+				height: 68%;
+				overflow-y: auto;
+			}
+			.DivBackground {
+				margin: 0 auto;
+				width: 99%;
+				border-radius: 100px;
+				border: 5px solid;	
+				background:#77DDFF;
+			}
+	</style>
+</head>
+<body ng-controller="ActViwCtrl">
+<div id="tool" >
+	<button type="button" class="btn btn-default" aria-label="Left Align" style="position:absolute;top:0;left:0;">
+	  <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+	</button>
+	<nav id="effect" class="navbar-default" role="navigation" style="display:none;position:absolute;top:0;left:0;">
+		<div class="collapse navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li id="back"><a class="glyphicon glyphicon-chevron-down"></a></li>
+			  	<li id="back"><a href="ActivityManager.html">返回</a></li>
+			  	<li class="active"><a href="ActivityViewer.html">即時闖關狀況</a></li>
+		  		<li class="dropdown">
+				    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+				    	頒獎模式<span class="caret"></span>
+				    </a>
+				    <ul class="dropdown-menu" role="menu">
+					  <li><a href="ActivityViewer1-1.html">報表式</a></li>
+					  <li><a href="ActivityViewer1-2.html">關卡式</a></li>
+				    </ul>
+				</li>
+			  	<li><a href="ActivityViewer2.html">依年級查詢</a></li>
+			  	<li><a href="ActivityViewer3.html">單一學生查詢</a></li>
+			  	<li><a href="ActivityViewer4.html">依關卡查詢</a></li>
+			  	<li><a href="TransNumber.html">補號</a></li>
+		  	<ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+</div>
+<div id="bg" class="DivBackground">
+	<div style="color:#0000FF;margin-top:2%;margin-left:5%;font-size:20px;float:left;">
+		<p><b>闖關開始時間：{{data.start_time}}</b></p>
+		<p><b>闖關結束時間：{{data.end_time}}</b></p>
+	</div>
+	<div style="color:#0000FF;margin-top:2%;margin-left:20%;font-size:40px;float:left;">
+		<p>
+			<b>剩餘：</b>
+			<b id="timer" style="color:#FF0000"></b>
+		</p>
+	</div>
+	<div style="color:#0000FF;margin-top:2%;margin-right:10%;font-size:20px;float:right;">
+		<p><b>目前最高關卡數：{{data.most_pass}}關</b></p>
+		<p><b>通過全部關卡：{{data.all_pass}}人</b></p>
+	</div>
+	<div class="DivShow">
+		<div id="show" class="DivContainer">
+			<div class='header' style='float: left;height:8%;font-size:20px;'> 
+				<table class='table table-striped table-bordered' style='background:#FFFFFF;'> 
+					<tr> <td>關卡順序</td> </tr> 
+					<tr> <td>關卡名稱</td> </tr> 
+					<tr> <td>闖關人數</td> </tr> 
+					<tr> <td>過關人數</td> </tr> 
+					<tr> <td>平均時間</td> </tr> 
+				</table> 
+			</div>
+			<div style="float: left;font-size:20px;height:8%;" ng-repeat="stg in data.stage_data" on-finish-render-filters>
+				<table class="table table-striped table-bordered" style="background:#FFFFFF;">
+					<tr>
+						<td >{{stg.stg_rank}}</td>
+					</tr>
+					<tr>
+						<td>{{stg.stg_name}}</td>
+					</tr>
+					<tr>
+						<td>{{stg.challenge}}</td>
+					</tr>
+					<tr>
+						<td>{{stg.pass}}</td>
+					</tr>
+					<tr>
+						<td>{{stg.avg_time}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	$(function() {
+		$("#bg").height($(window).height() * 0.99);
+		$( window ).resize(function() {
+			$("#bg").height($(window).height() * 0.99);
+		});
+		$( "#tool" )
+		.mouseenter(function() {
+		  	$("#effect").stop().slideToggle( "normal" );
+  		})
+		.mouseleave(function() {
+	  		$("#effect").stop().slideToggle( "normal" );
+	  	});
+	  	check_aid();
+	});
+	var ActViw = angular.module('ActViw', []);
+	ActViw
+	.directive('onFinishRenderFilters', function ($timeout) {
+	    return {
+	        restrict: 'A',
+	        link: function(scope, element, attr) {
+	            if (scope.$last === true) {
+	                $timeout(function() {
+	                    scope.$emit('ngRepeatFinished');
+	                });
+	            }
+	        }
+	    };
+	})
+	.controller('ActViwCtrl', function($scope, $http,$timeout) {
+		$scope.data = 
+		{
+			state : "等待活動",
+			start_time : '00:00:00',
+			end_time : '99:99:99',
+			most_pass : 2,
+			all_pass : 0,
+			stage_data : []
+
+		};
+
+		$scope.onTimeout = function(){
+			var aid = $.cookie('aid');
+			var dataObj = {
+				aid : aid
+			}
+	       	$http.get('ActivityViewer/actview1.view?aid='+$.cookie('aid')).success(function(data){
+				$scope.data = data;
+				$scope.timer = 0;
+				var timeDate= new Date();
+				var endtime = $scope.data.end_time;
+				if($scope.data.state.length == 0)
+				{
+					$scope.timer = parseInt(endtime.substr(0,2)) * 3600 + parseInt(endtime.substr(3,2)) * 60 + parseInt(endtime.substr(6,2));
+					var nowTime = timeDate.getHours() * 3600 + timeDate.getMinutes() * 60 + timeDate.getSeconds();
+					$scope.timer = $scope.timer - nowTime;
+					if($scope.timer < 0)
+						$scope.timer = 0;
+					$('#timer').text(SecondToTime($scope.timer));
+				}
+				else
+					$('#timer').text($scope.data.state);
+				for( var i = 0; i < $scope.data.stage_data.length; i++ ) 
+				{
+					$scope.data.stage_data[i].avg_time = SecondToTime($scope.data.stage_data[i].avg_time);
+				}
+	        });
+        	$timeout($scope.onTimeout, 1000);
+    	}
+		$scope.$on('ngRepeatFinished', function (ngRepeatFinishedEvent) {
+		});
+    	var mytimeout = $timeout($scope.onTimeout, 0); 
+	});
+
+	function tableLabel(){
+		var height = 0;
+		$('div .header').remove();
+		$('#show')
+		.find('div').each(
+			function(){
+				if($(this).offset().top != height){
+					height = $(this).offset().top;
+					var div = "<div class='header' style='float: left;width:8%;font-size:20px;'> <table class='table table-striped table-bordered' style='background:#FFFFFF;'> <tr> <td >關卡編號</td> </tr> <tr> <td>闖關人數</td> </tr> <tr> <td>過關人數</td> </tr> <tr> <td>平均時間</td> </tr> </table> </div>";
+                    $(div).insertBefore($(this));
+				}
+			}
+		);
+	}
+	function getNowTime(){
+		var timeDate= new Date();
+		var tMonth = (timeDate.getMonth()+1) > 9 ? (timeDate.getMonth()+1) : '0'+(timeDate.getMonth()+1);
+		var tDate = timeDate.getDate() > 9 ? timeDate.getDate() : '0'+timeDate.getDate();
+		var tHours = timeDate.getHours() > 9 ? timeDate.getHours() : '0'+timeDate.getHours();
+		var tMinutes = timeDate.getMinutes() > 9 ? timeDate.getMinutes() : '0'+timeDate.getMinutes();
+		var tSeconds = timeDate.getSeconds() > 9 ? timeDate.getSeconds() : '0'+timeDate.getSeconds();
+		return timeDate = tHours +':'+ tMinutes +':'+ tSeconds;
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+
+<!doctype html>
+<html ng-app>
+<head>
+	<meta charset="UTF-8">
+	<title>AngularJS</title>
+
+<script src="./jquery-1.11.1.min.js"></script>
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+<link rel="stylesheet" href="./cp.css">
+<script src="./bootstrap/js/bootstrap.js"></script>
+<script src="./bootstrap-table/bootstrap-table.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-inverse" role="navigation">
+	       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-9">
+	         <ul class="nav navbar-nav">
+	  <li ><a href="makeBarCode.html">製作條碼</a></li>
+	  <li class="active"><a href="showTable.html">顯示名次</a></li>
+	  <li class="dropdown">
+	    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+	      PDF <span class="caret"></span>
+	    </a>
+	    <ul class="dropdown-menu" role="menu">
+		  <li><a href="#" onClick="window.open('getBarCode');">取得已產生的條碼</a></li>
+		  <!-- <li><a href="#" onClick="window.open('getSummaryPDF?get=0');">getSummaryPDF 1</a></li>-->
+		  <li><a href="#" onClick="window.open('getSummaryPDF?get=1');">取得關卡統計報表</a></li>
+		  <!-- li><a href="#" onClick="window.open('getSummaryPDF?get=2');">取得學生統計報表</a></li-->
+	    </ul>
+	         </ul>
+	       </div><!-- /.navbar-collapse -->
+	</nav>
+	<!--div class="btn-group">
+		<button type="button" class="btn btn-default" onClick="location='makeBarCode.html'">makeBarCode</button>
+		<button type="button" class="btn btn-default" onClick="location='showTable.html'">showTable</button>
+		<button type="button" class="btn btn-default" onClick="window.open('getBarCode');">getBarCode</button>
+		<button type="button" class="btn btn-default" onClick="window.open('getSummaryPDF?get=0');">getSummaryPDF 1</button>
+		<button type="button" class="btn btn-default" onClick="window.open('getSummaryPDF?get=1');">getSummaryPDF 2</button>
+	</div-->
+	<div ng-controller="table2Ctrl">
+	<div class="input-group col-md-2 ">
+	  <span class="input-group-addon"  >顯示前</span>
+	  <input type="text" class="form-control text-center" type="number" ng-model="limit">
+	  <span class="input-group-addon">名</span>
+	</div>
+	<table id="myTable" style="width:1500px;">
+	  <tr>
+		<th style="width:300px">年級
+		</th>
+		<th style="width:300px">條碼編號
+		</th>
+		<th style="width:300px">通過關數
+		</th>
+		<th style="width:300px">最後通關
+		</th>
+		<th>花費時間
+		</th>
+	  </tr>
+	  <tr ng-repeat="friend in names | limitTo:limit">
+	    <td style="width:300px">{{ friend.year }}</td>
+	    <td style="width:300px">{{ friend.barcode_id }}</td>
+	    <td style="width:300px">{{ friend.stage }}</td>
+	    <td style="width:300px">{{ friend.client_id }}</td>
+	    <td>{{ friend.dateStr }}</td>
+	  </tr>
+	</table>
+
+	</div>
+	<!--table id="table-methods-table" data-toggle="table" data-url="getStdTable" data-cache="false" data-height="299" data-cache="false" data-height="400" data-pagination="true" data-search="true">
+    	<thead>
+       		<tr>
+            	<th data-field="year" data-align="right" data-sortable="true">year</th>
+            	<th data-field="barcode_id" data-align="center" data-sortable="true">barcode_id</th>
+            	<th data-field="stage" data-align="center" data-sortable="true">stage</th>
+            	<th data-field="client_id" data-align="center" data-sortable="true">client_id</th>
+            	<th data-field="dateStr" data-sortable="true" data-sorter="true">spentTime</th>
+        	</tr>
+    	</thead>
+	</table-->
+	
+	<script>
+			
+	function table2Ctrl($scope,$http,$timeout){
+		$scope.limit = 100;
+        $http.get("getStdTable").success(function(data, status, headers, config){
+        	$scope.names = data;
+        });
+    	$scope.onTimeout = function(){
+        	$http.get("getStdTable").success(function(data, status, headers, config){
+        		$scope.names = data;
+        	});
+        	$timeout($scope.onTimeout, 1000);
+    	}
+    	var mytimeout = $timeout($scope.onTimeout, 1000);  
+	
+	} 
+	function showTime()
+	{
+	 	$table = $('#table-methods-table').bootstrapTable();
+	  	$table.bootstrapTable('refresh', {url: 'getStdTable'});
+    	setTimeout("showTime()", 5000);
+	}
+	</script>
+</body>
+</html>

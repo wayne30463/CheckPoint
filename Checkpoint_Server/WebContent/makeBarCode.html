@@ -1,0 +1,158 @@
+<html ng-app="helloApp">
+<head>
+<meta charset="UTF-8">
+<title>Hello AngularJS - Add Table Row Dynamically</title>
+<script src="./jquery-1.11.1.min.js"></script>
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+<script src="./bootstrap/js/bootstrap.js"></script>
+
+<link rel="stylesheet" href="./cp.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+</head>
+<body ng-controller="PageCtrl">
+	<nav class="navbar navbar-inverse role="navigation">
+	       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-9">
+	         <ul class="nav navbar-nav">
+	  <li class="active"><a href="makeBarCode.html">製作條碼</a></li>
+	  <li><a href="showTable.html">顯示名次</a></li>
+	  <li class="dropdown">
+	    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+	      PDF <span class="caret"></span>
+	    </a>
+	    <ul class="dropdown-menu" role="menu">
+		  <li><a href="#" onClick="window.open('getBarCode');">取得已產生的條碼</a></li>
+		  <!-- <li><a href="#" onClick="window.open('getSummaryPDF?get=0');">getSummaryPDF 1</a></li>-->
+		  <li><a href="#" onClick="window.open('getSummaryPDF?get=1');">取得關卡統計報表</a></li>
+	    </ul>
+	         </ul>
+	       </div><!-- /.navbar-collapse -->
+	</nav>
+	<form role="form" name="form" novalidate>
+		<table id="tb" class="table table-striped table-bordered" style="width:1350px" >
+		<tr>
+			<th style="width:600px">年級
+			</th>
+			<th style="width:600px">數量
+			</th>
+			<th style="width:150px">Action
+			</th>
+		</tr>
+		<tr ng-repeat="student in students" ng-form="innerForm" >
+			<td>
+	        <div class="form-group" data-ng-class="{ 'has-error' : innerForm.year.$invalid }">
+				<input class="form-control" name="year" type="number" data-toggle="tooltip" data-placement="right" title="只能輸入1位數"
+				 ng-model="student.year"  ng-maxlength="1"   required />
+			</div>
+			</td>
+			<td>
+	        <div class="form-group" data-ng-class="{ 'has-error' : innerForm.num.$invalid }">
+				<input class="form-control" name="num" type="number"   data-toggle="tooltip" data-placement="right" title="只能輸入3位數"
+				ng-model="student.num"  ng-maxlength="3" required />
+			</div>
+			</td>
+			<td>
+				<input type="button" value="移除" class="btn btn-primary" height="30px" ng-click="removeRow(student.index)"/>
+			</td>
+		</tr>
+	</table>
+			<input type="button" value="新增" class="btn btn-primary" ng-click="addRow()" style="width:600px;height:50px;"/>	
+			<!-- input type="button" value="GET" class="btn btn-primary" ng-click="getTable()" ng-show="form.$valid"/-->
+			<!-- Button trigger modal -->
+			<input type="button" value="產生條碼" class="btn btn-primary" ng-show="form.$valid" data-toggle="modal" data-target="#myModal" style="width:600px;height:50px;"/>
+			<input id="show_how" data-toggle="tooltip" data-placement="right" title="請輸入數字!!" 
+			type="button" value="輸入錯誤" class="btn btn-danger" ng-show="!form.$valid" style="width:600px;height:50px;"/>
+	</form>
+	
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title" id="myModalLabel">警告</h4>
+	      </div>
+	      <div class="modal-body">
+	        	重設學生資料會清空上一次活動的所有資料(打卡紀錄、條碼)，是否確認清除？
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">否</button>
+	        <button type="button" class="btn btn-primary" ng-click="getTable()" data-dismiss="modal">是</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+		
+<script>
+   $(function () { $("[data-toggle='tooltip']").tooltip(); });
+var helloApp = angular.module("helloApp", []);
+helloApp.controller("PageCtrl", function($scope, $http, $timeout) {
+	//$("body").append("<input type='button' value='ADD' class='btn btn-primary'/>");
+	$scope.students = [{ 
+							'index': 0,
+	                    	'year': 1,
+	                    	'num': 20
+	                    }];
+	$http.get("getStdSet").success(function(data, status, headers, config){
+        	$scope.students = data;
+        	$timeout(function () { $("[data-toggle='tooltip']").tooltip(); }, 0);
+        });
+	$scope.addRow = function(){	
+		var stdArr = eval( $scope.students );
+		$scope.students.push({ 'index': stdArr.length, 'year': 0, 'num': 0 });
+    	$timeout(function () { $("[data-toggle='tooltip']").tooltip(); }, 0);
+	};
+	$scope.removeRow = function(std_index){		
+			var index = -1;		
+			var stdArr = eval( $scope.students );
+			for( var i = 0; i < stdArr.length; i++ ) {		
+				if( stdArr[i].index === std_index ) {
+					index = i;
+					break;
+				}
+			}
+			if( index === -1 ) {
+				alert( "Something gone wrong" );
+			}
+			else
+				$scope.students.splice( index, 1 );		
+	};
+	$scope.getTable = function(){
+		var arr = [];
+		var result = "";
+		var stdArr = eval( $scope.students );
+		var i = 0;
+		$("#tb tr:not(:first)").each(function(i) {
+			var str = "";
+			if($(this).find("td:nth-child(2)").find("input").val() != "" && $(this).find("td:nth-child(3)").find("input").val() != "" )
+			{
+				if($(this).find("td:nth-child(2)").find("input").val() != "0" && $(this).find("td:nth-child(3)").find("input").val() != "0" )
+				{
+					//stdArr[i].year = $(this).find("td:nth-child(1)").find("input").val();
+					//stdArr[i].num = $(this).find("td:nth-child(2)").find("input").val();
+
+				  	str += ($(this).find("td:nth-child(1)").find("input").val() + "," +$(this).find("td:nth-child(2)").find("input").val());
+				  	result += (str + ";");
+				}
+			}
+	    });
+		
+		$.post("getPDF",
+				  {
+				    data:result
+				  },
+				  function(data,status){
+					  window.open('getBarCode');
+					  //location.reload();
+				  });
+		/*
+		var jsonData = JSON.stringify($scope.students);
+		$http.get("http://localhost:8080/Checkpoint_Server/testPDF").success(function(data, status, headers, config){
+	        $("body").append(headers);
+	        $("body").append(data);
+    	});*/
+	};
+});
+</script>
+</body>
+</html>

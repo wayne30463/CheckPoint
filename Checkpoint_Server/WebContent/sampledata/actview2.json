@@ -1,0 +1,74 @@
+[
+  {
+    "year": 1,
+    "barcode_id": "001",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 2,
+    "dateStr": "1小時3分47秒"
+  },
+  {
+    "year": 1,
+    "barcode_id": "002",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 2,
+    "dateStr": "1小時5分40秒"
+  },
+  {
+    "year": 1,
+    "barcode_id": "003",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 2,
+    "dateStr": "1小時8分25秒"
+  },
+  {
+    "year": 1,
+    "barcode_id": "004",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 2,
+    "dateStr": "1小時12分38秒"
+  },
+  {
+    "year": 1,
+    "barcode_id": "005",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 2,
+    "dateStr": "1小時15分59秒"
+  },
+  {
+    "year": 1,
+    "barcode_id": "006",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 2,
+    "dateStr": "1小時20分01秒"
+  },
+  {
+    "year": 1,
+    "barcode_id": "007",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 2,
+    "dateStr": "1小時35分17秒"
+  },
+  {
+    "year": 1,
+    "barcode_id": "008",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 2,
+    "dateStr": "1小時49分28秒"
+  },
+  {
+    "year": 2,
+    "barcode_id": "009",
+    "client_id": "test",
+    "spentTime": 0,
+    "stage": 1,
+    "dateStr": "1小時09分26秒"
+  }
+]
