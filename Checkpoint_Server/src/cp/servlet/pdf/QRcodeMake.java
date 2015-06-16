@@ -70,6 +70,7 @@ public class QRcodeMake extends HttpServlet {
 			BaseFont bfChinese = BaseFont.createFont("c:\\windows\\fonts\\kaiu.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 			Font fontRedCN = new Font(bfChinese, 12, Font.NORMAL, new BaseColor(255, 0, 0));
 			Font fontBlueCN = new Font(bfChinese, 12, Font.NORMAL, new BaseColor(0, 0, 255));
+			Font fontBlackCN = new Font(bfChinese, 20, Font.NORMAL, new BaseColor(0, 0, 0));
 			writer = PdfWriter.getInstance( document, buffer );
 			document.open(); 
 			PdfContentByte cb = writer.getDirectContent(); 
@@ -78,16 +79,22 @@ public class QRcodeMake extends HttpServlet {
 	        PdfPTable table = new PdfPTable(1); 
 	        //設定table的寬度
 	        table.setWidthPercentage(100f);
-	        //設定table的title
-	        PdfPCell title = new PdfPCell();
-	        //合併儲存格
-	        title.setColspan(1);
-	        title.addElement(new Phrase("Table's Title"));
-	        table.addCell(title);
-	        table.setHorizontalAlignment(Element.ALIGN_CENTER);
 	        
 	        int last_barNum = 0;
 	        for(JoinSchool school : jschool_lst) {
+	        	if(jschool_lst.indexOf(school) != 0) {
+	        		document.newPage();
+		        	document.add(table);
+		        	table = new PdfPTable(1); 
+			        table.setWidthPercentage(100f);
+	        	}
+		        //設定table的title
+	        	PdfPCell title = new PdfPCell(new Phrase(new Chunk(school.getSchName(),fontBlackCN)));
+		        //合併儲存格
+		        title.setHorizontalAlignment(Element.ALIGN_CENTER);
+		        title.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		        title.setFixedHeight(30);
+		        table.addCell(title);
 	        	int st_code = Integer.valueOf(school.getStCode());
 	        	int ed_code = Integer.valueOf(school.getEdCode());
 	        	
@@ -102,7 +109,7 @@ public class QRcodeMake extends HttpServlet {
 				    	barCodeImage = Image.getInstance(qrcode.createAwtImage(Color.RED, Color.WHITE), null);
 				    barCodeImage.scaleToFit(BarcodeSize);
 				    PdfPCell QRcell = new PdfPCell(barCodeImage);
-				    QRcell.setMinimumHeight(71);
+				    QRcell.setMinimumHeight(65);
 				    QRcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 				    QRcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 				    
@@ -121,6 +128,7 @@ public class QRcodeMake extends HttpServlet {
 			last_barNum = last_barNum % columnSize;
 			for (int i=0;i<columnSize - last_barNum;i++)
 				table.addCell(new PdfPCell());
+    		document.newPage();
 	        document.add(table);
 			document.close();
 		} catch (DocumentException e) {

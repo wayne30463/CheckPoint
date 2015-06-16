@@ -157,12 +157,11 @@
 
 	            		}
 	        		});
-    			//var mytimeout = $timeout($scope.onTimeout, 1000); 
+    			var mytimeout = $timeout($scope.onTimeout, 1000); 
 	        });
 		}
 		$scope.$on('ngRepeatFinished', function (ngRepeatFinishedEvent) {
           	//下面是在table render完成后执行的js
-          	//tableColor();
           	$("[name='state']").each(
 				function(){
 					if($(this).text() == "O")
